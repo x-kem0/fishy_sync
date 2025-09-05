@@ -127,13 +127,13 @@ defmodule Synchronizer do
         username: username,
         host: host,
         detail: false
-      } |> JSON.encode!(),
+      } |> Jason.encode!(),
       @headers
     )
     
     case result do
       {:ok, %{status_code: 200, body: body}} ->
-        case body |> JSON.decode!() |> Enum.find(&(Map.get(&1, "username") == username)) do
+        case body |> Jason.decode!() |> Enum.find(&(Map.get(&1, "username") == username)) do
           %{"id" => user_id} -> {:ok, user_id}
           _ -> {:error, :could_not_find_user}
         end
@@ -151,7 +151,7 @@ defmodule Synchronizer do
     
     case result do
       {:ok, %{status_code: 200, body: body}} ->
-        case body |> JSON.decode!() do
+        case body |> Jason.decode!() do
           %{"id" => user_id} -> {:ok, user_id}
           _ -> {:error, :could_not_find_user}
         end
@@ -180,13 +180,13 @@ defmodule Synchronizer do
         withQuotes: false,
         withReplies: false,
         limit: 100
-      } |> JSON.encode!(),
+      } |> Jason.encode!(),
       @headers
     )
 
     case resp do
       {:ok, %{status_code: 200, body: body}} ->
-        notes = body |> JSON.decode!()
+        notes = body |> Jason.decode!()
         notes = 
           for %{"id" => note_id} <- notes do
             note_id
@@ -219,13 +219,13 @@ defmodule Synchronizer do
         withReplies: false,
         untilId: last_id,
         limit: 100
-      } |> JSON.encode!(),
+      } |> Jason.encode!(),
       @headers
     )
 
     case resp do
       {:ok, %{status_code: 200, body: body}} ->
-        notes = body |> JSON.decode!()
+        notes = body |> Jason.decode!()
         notes = 
           for %{"id" => note_id} <- notes do
             note_id
@@ -251,7 +251,7 @@ defmodule Synchronizer do
 
     case resp do
       {:ok, %{status_code: 200, body: body}} ->
-        notes = body |> JSON.decode!()
+        notes = body |> Jason.decode!()
         notes = 
           for %{"id" => note_id} <- notes do
             note_id
@@ -278,7 +278,7 @@ defmodule Synchronizer do
 
     case resp do
       {:ok, %{status_code: 200, body: body}} ->
-        notes = body |> JSON.decode!()
+        notes = body |> Jason.decode!()
         notes = 
           for %{"id" => note_id} <- notes do
             note_id
