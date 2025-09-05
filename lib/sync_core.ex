@@ -101,12 +101,13 @@ defmodule SyncCore do
       {:reply, :ok, state}
     else
       :logger.info("synchronization finished for user id #{user_id}")
-      state = 
-        %{state |
-          current_user: nil
-        } |> sync()
-      {:reply, :ok, state}
+      {:reply, :ok, %{state | current_user: nil}, {:continue, :sync}}
     end
+  end
+
+  def handle_continue(:sync, state) do
+    state = sync(state)
+    {:noreply, state}
   end
 
   defp followee_remote_check(json) do
