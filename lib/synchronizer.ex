@@ -71,7 +71,7 @@ defmodule Synchronizer do
       {:ok, instance_type} = check_instance_type(url),
       {:ok, user_id} <- get_user_id(url, instance_type, username, host),
       {:ok, posts} <- get_posts(url, instance_type, user_id),
-      notes <- post_id_to_note_url(posts, url, instance_type) do
+      notes <- post_id_to_note_url(posts, url, instance_type, user_id) do
         :logger.info("user #{fully_qualified_username} | type: #{instance_type} | id: #{user_id} | #{length(posts)} posts")
         {:ok, notes}
     end
@@ -296,11 +296,11 @@ defmodule Synchronizer do
     end
   end
 
-  def post_id_to_note_url(notes, url, instance_type) do
+  def post_id_to_note_url(notes, url, instance_type, user_id) do
     case instance_type do
       :mastodon ->
         for note <- notes do
-          "#{url}/users/statuses/#{note}"
+          "#{url}/users/#{user_id}/statuses/#{note}"
         end
       :misskey ->
         for note <- notes do
