@@ -161,7 +161,7 @@ defmodule SyncCore do
 
   defp unassign_role(user_id, role_id, state) do
     HTTPoison.post(
-      "https://" <> state.home_host <> "/api/admin/roles/unassign",
+      "http://localhost:3000/api/admin/roles/unassign",
       %{
         "roleId" => role_id,
         "userId" => user_id
@@ -175,7 +175,7 @@ defmodule SyncCore do
 
   defp assign_role(user_id, role_id, state) do
     HTTPoison.post(
-      "https://" <> state.home_host <> "/api/admin/roles/assign",
+      "http://localhost:3000/api/admin/roles/assign",
       %{
         "roleId" => role_id,
         "userId" => user_id
