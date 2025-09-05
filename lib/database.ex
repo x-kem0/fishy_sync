@@ -1,10 +1,10 @@
 defmodule Database do
-  defp query(query) do
-    Postgrex.query(FishySync.Database, query)
+  defp query(query, vars \\ []) do
+    Postgrex.query(FishySync.Database, query, vars)
   end
   
-  defp query_fmt(query) do
-    {:ok, result} = query(query)
+  defp query_fmt(query, vars) do
+    {:ok, result} = query(query, vars)
 
     for row <- result.rows do
       row_to_obj(result.columns, row)
@@ -45,14 +45,14 @@ defmodule Database do
 
   def get_role_id_by_name(name) do
     #FIXME: see if binding can be done
-    [%{"id" => id}] = query_fmt("SELECT id FROM role WHERE Name = '#{name}'")
+    [%{"id" => id}] = query_fmt("SELECT id FROM role WHERE Name = $1", [name])
     id
   end
 
   def user_is_member_of?(user_id, role_id) do
     result = query("""
-      SELECT id FROM role_assignment WHERE "userId" = '#{user_id}' AND "roleId" = '#{role_id}'
-    """)
+      SELECT id FROM role_assignment WHERE "userId" = $1 AND "roleId" = $2
+    """, [user_id, role_id])
 
     case result do
       {:ok, %{rows: [_]}} -> true
@@ -64,8 +64,8 @@ defmodule Database do
     {:ok, %{rows: [[
       username, host
     ]]}} = query("""
-        SELECT username, host FROM public.user WHERE id = '#{user_id}'
-        """)
+        SELECT username, host FROM public.user WHERE id = $1
+        """, [user_id])
 
     {username, host}
   end
@@ -73,7 +73,7 @@ defmodule Database do
   def get_user_id_by_username(fully_qualified_username) do
     [username, host] = String.split(fully_qualified_username, "@")
     #FIXME: see if binding can be done
-    [%{"id" => id}] = query_fmt("SELECT id FROM public.user WHERE username = '#{username}' AND host = '#{host}'")
+    [%{"id" => id}] = query_fmt("SELECT id FROM public.user WHERE username = $1 AND host = $2", [username, host])
     id
   end
 
