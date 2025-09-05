@@ -5,7 +5,7 @@ defmodule FishySync.MixProject do
     [
       app: :fishy_sync,
       version: "0.1.0",
-      elixir: "~> 1.18",
+      elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
