@@ -32,7 +32,7 @@ defmodule SyncWorker do
     results = for url <- chunk do
       resp = HTTPoison.post(
         "https://#{state.home_host}/api/ap/show", 
-        %{uri: url} |> JSON.encode!(), 
+        %{uri: url} |> Jason.encode!(), 
         headers
       )
       {url, resp}
@@ -44,7 +44,7 @@ defmodule SyncWorker do
           :logger.warning("#{url} failed, retrying")
           HTTPoison.post(
             "https://#{state.home_host}/api/ap/show", 
-            %{uri: url} |> JSON.encode!(), 
+            %{uri: url} |> Jason.encode!(), 
             headers
           )
         {:ok, %{status_code: 200}} ->
@@ -53,7 +53,7 @@ defmodule SyncWorker do
           :logger.warning("#{url} failed, retrying")
           HTTPoison.post(
             "https://#{state.home_host}/api/ap/show", 
-            %{uri: url} |> JSON.encode!(), 
+            %{uri: url} |> Jason.encode!(), 
             headers
           )
       end

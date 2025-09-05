@@ -9,7 +9,7 @@ defmodule SyncCore do
     Process.send(__MODULE__, {:notification, nil, nil, nil, %{
       "followeeId" => user_id,
       "followeeHost" => ":)"
-    } |> JSON.encode!()}, [])
+    } |> Jason.encode!()}, [])
   end
 
   def report_finish(user_id, result) do
@@ -61,7 +61,7 @@ defmodule SyncCore do
   # notification of a new follow from the database
   def handle_info({:notification, _notification_pid, _listen_ref, _channel, message}, state) do
     result =
-      with {:ok, json} <- JSON.decode(message),
+      with {:ok, json} <- Jason.decode(message),
            :ok <- followee_remote_check(json),
            {:ok, user_id} <- get_user_id(json),
            :ok <- user_already_queued_check(user_id, state),
@@ -165,7 +165,7 @@ defmodule SyncCore do
       %{
         "roleId" => role_id,
         "userId" => user_id
-      } |> JSON.encode!(),
+      } |> Jason.encode!(),
       [
         {"Content-Type", "application/json"},
         {"Authorization", "Bearer #{state.bearer_token}"}
@@ -179,7 +179,7 @@ defmodule SyncCore do
       %{
         "roleId" => role_id,
         "userId" => user_id
-      } |> JSON.encode!(),
+      } |> Jason.encode!(),
       [
         {"Content-Type", "application/json"},
         {"Authorization", "Bearer #{state.bearer_token}"}
